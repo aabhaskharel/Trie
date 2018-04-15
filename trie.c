@@ -88,10 +88,23 @@ trie_del(struct trie * trie, u32 len, u8 * key)
 
   for(int level = 0; level < len; level++)
   {
+    int count = 0;
+    for(int l = 0; l < SIZE; l++)
+    {
+      if(!temp->children[l])
+        count++;
+    }
+    //printf("count: %d\n\n",count);
+    if(count == 256){
+      //printf("freed!\n");
+      free(temp);
+      return true;
+    }
     temp = temp->children[key[level]];
   }
 
+  bool result = temp->isEnd;
   temp->isEnd = false;
 
-  return true;
+  return result;
 }
