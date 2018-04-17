@@ -44,10 +44,7 @@ trie_new(void)
 trie_set(struct trie * trie, u32 len, u8 * key)
 {
   struct trie *temp = trie;
-
-
   //*key = encode(len,key);
-
   for(int level=0; level < len; level++)
   {
     if(!temp->children[key[level]])
@@ -65,12 +62,10 @@ trie_set(struct trie * trie, u32 len, u8 * key)
 trie_get(struct trie * trie, u32 len, u8 * key)
 {
   struct trie *temp = trie;
-
   //*key = encode(len,key);
-
   for(int level =0; level < len; level++)
   {
-    if (!temp->children[key[level]])
+    if(!temp->children[key[level]])
       return false;
 
     temp = temp->children[key[level]];
@@ -83,26 +78,20 @@ trie_get(struct trie * trie, u32 len, u8 * key)
 trie_del(struct trie * trie, u32 len, u8 * key)
 {
   struct trie *temp = trie;
-
+  struct trie *toDelete = (struct trie*)malloc(sizeof(struct trie));
   //*key = encode(len,key);
-
   for(int level = 0; level < len; level++)
   {
-    int count = 0;
-    for(int l = 0; l < SIZE; l++)
-    {
-      if(!temp->children[l])
-        count++;
-    }
-    //printf("count: %d\n\n",count);
-    if(count == 256){
-      //printf("freed!\n");
-      free(temp);
-      return true;
-    }
+    if(!temp->children[key[level]])
+      return false;
+
+    if(temp->isEnd)
+      toDelete = temp->children[key[level]];
+
     temp = temp->children[key[level]];
   }
 
+  free(toDelete);
   bool result = temp->isEnd;
   temp->isEnd = false;
 
